@@ -77,33 +77,6 @@ function setDraggablePositionOfChild(inDraggable, inParentPosition) {
   inDraggable.top = inParentPosition.y + 150 + pos.y
 }
 
-function updateDraggablePosition(Index, PositionDiff) {
-  const draggable = myTree[Index].draggable
-  draggable.left -= PositionDiff.x
-  draggable.top -= PositionDiff.y
-}
-
-function redrawLeaderLines(Index, PositionDiff) {
-  const ref = myTree[Index]
-  const node = ref.node
-  const draggable = ref.draggable
-  const children = ref.children
-  const parent = myTree[ref.parentIndex]
-
-  if (parent) {
-    const parent_node = parent.node
-    myTree[Index].leaderline.remove()
-    myTree[Index].leaderline = new LeaderLine(parent_node, node)
-  }
-
-  if (children.length > 0) {
-    children.forEach((childIndex) => {
-      updateDraggablePosition(childIndex, PositionDiff)
-      redrawLeaderLines(childIndex, PositionDiff)
-    })
-  }
-}
-
 function addNode(text_content, ParentIndex) {
   //Create references to the parent node's properties.
   const ParentRef = myTree[ParentIndex]
@@ -162,6 +135,33 @@ function addNode(text_content, ParentIndex) {
 
   //Attach an event listener to the add button.
   add_button_reference.onclick = addNode.bind(null, 'New Node', NewNodeIndex)
+}
+
+function redrawLeaderLines(Index, PositionDiff) {
+  const ref = myTree[Index]
+  const node = ref.node
+  const draggable = ref.draggable
+  const children = ref.children
+  const parent = myTree[ref.parentIndex]
+
+  if (parent) {
+    const parent_node = parent.node
+    myTree[Index].leaderline.remove()
+    myTree[Index].leaderline = new LeaderLine(parent_node, node)
+  }
+
+  if (children.length > 0) {
+    children.forEach((childIndex) => {
+      updateDraggablePosition(childIndex, PositionDiff)
+      redrawLeaderLines(childIndex, PositionDiff)
+    })
+  }
+}
+
+function updateDraggablePosition(Index, PositionDiff) {
+  const draggable = myTree[Index].draggable
+  draggable.left -= PositionDiff.x
+  draggable.top -= PositionDiff.y
 }
 
 function update_leaderline_positions() {
